@@ -1,0 +1,17 @@
+version: '3'
+
+vars:
+  CONTAINER_NAME: 'metaway_challenge'
+
+tasks:
+  start:
+    cmds:
+      - docker compose up -d --build
+      - docker exec -it {{.CONTAINER_NAME}} cp .env.example .env
+      # - docker exec -it {{.CONTAINER_NAME}} npx tailwindcss -i ./src/tailwind.css -o ./src/tailwindcss.css --watch
+    desc: "Setup environment"
+  stop:
+    cmds:
+      - docker compose down
+    desc: "Shutdown environment"
+silent: true

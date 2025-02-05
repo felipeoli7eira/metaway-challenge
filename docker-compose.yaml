@@ -1,0 +1,9 @@
+services:
+  frontend:
+    container_name: metaway_challenge
+    build: .
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - './app:/usr/frontend'

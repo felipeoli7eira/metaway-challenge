@@ -1,0 +1,19 @@
+POST https://demometaway.vps-kinghost.net:8485/api/usuario/salvar
+accept: */*
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTczODc2MTc5NSwiZXhwIjoxNzM4ODQ4MTk1fQ.5xFe4zdtu-yMN77vnkWt1CxkwdOdfz4dbzWS_XVcJlST3Kn1hQdxyxcwbk2-o5T8O-YcNr_ayXm5UWPa26UVNQ
+
+{
+  "tipos": [
+    "ROLE_ADMIN"
+  ],
+  "usuario": {
+    "cpf": "961.502.090-75",
+    "dataNascimento": "1990-01-01",
+    "email": "felipe.oliveira@metaway.com",
+    "nome": "Felipe A Oliveira",
+    "password": "1q2w3e4r5t",
+    "telefone": "11978276615",
+    "username": "oli7eirafelipe"
+  }
+}

@@ -1,0 +1,8 @@
+POST https://demometaway.vps-kinghost.net:8485/api/auth/login
+accept: */*
+content-type: application/json
+
+{
+    "username": "oli7eirafelipe",
+    "password": "1q2w3e4r5t"
+}
