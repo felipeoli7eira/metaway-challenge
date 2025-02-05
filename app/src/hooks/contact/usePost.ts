@@ -12,7 +12,7 @@ import {
 import {
   postSchema,
   initialValuesFormCreate,
-} from "./../../schemas/customer";
+} from "../../schemas/contact";
 
 export default function usePost() {
   const ENDPOINT = "/api/v1/Clientes";

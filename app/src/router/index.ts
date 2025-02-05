@@ -2,6 +2,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 import useAuthToken from "./../hooks/auth/useAuthToken";
 
+const { hasToken } = useAuthToken();
+
 const appRoutes: RouteRecordRaw[] = [
   {
     path: "/app",
@@ -73,6 +75,13 @@ const routes: RouteRecordRaw[] = [
     name: "signin",
     component: () => import("./../views/SignIn/index.vue"),
     meta: {},
+    beforeEnter: (/* to */ _, __ /* from */, next) => {
+      if (hasToken()) {
+        return next({ name: 'app.index' })
+      }
+
+      return next()
+    }
   },
 
   ...appRoutes,
@@ -82,8 +91,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_URL),
   routes,
 });
-
-const { hasToken } = useAuthToken();
 
 router.beforeEach((to, _ /* from */, next) => {
   if (to.meta.needAuth) {

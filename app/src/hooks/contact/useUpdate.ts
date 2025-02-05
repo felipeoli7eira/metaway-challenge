@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { toast } from "@steveyuowo/vue-hot-toast";
 import { GenericObject, InvalidSubmissionHandler } from "vee-validate";
 
-import { updateSchema, FormUpdateFiels, initialUpdateFormValues } from "../../schemas/customer";
+import { updateSchema, FormUpdateFiels, initialUpdateFormValues } from "../../schemas/contact";
 
 // const ENDPOINT = "/api/v1/Clientes";
 
