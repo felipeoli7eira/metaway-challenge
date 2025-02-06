@@ -11,24 +11,147 @@
       :initialValues="initialValues"
       :key="initialValues"
       class="max-w-screen-lg mx-auto flex flex-col gap-6"
+      v-slot="{errors}"
     >
-      <label class="form-control w-full">
+      <label class="w-full">
         <div class="mb-2">
-          <span class="text-red-500">*</span> <span>Nome</span>
+          <span>Nome de usuário</span>
         </div>
 
-        <Field name="name" type="text" class="input input-bordered w-full" placeholder="..." />
+        <Field
+          name="username"
+          type="text"
+          maxlength="20"
+          class="input input-bordered w-full"
+          placeholder="@nomeDeUsuario"
+          :class="{'input-error': errors?.username}"
+        />
 
-        <div class="label">
-          <span class="label-text-alt text-sm text-red-500">
-            <ErrorMessage name="name" />
-          </span>
+        <div v-if="'username' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="username" />
         </div>
       </label>
 
+      <label class="w-full">
+        <div class="mb-2">
+          <span>E-mail</span>
+        </div>
+
+        <Field
+          type="email"
+          name="email"
+          class="input input-bordered w-full"
+          placeholder="seu@email.com"
+          :class="{'input-error': errors?.email}"
+        />
+
+        <div v-if="'email' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="email" />
+        </div>
+      </label>
+
+      <label class="w-full">
+        <div class="mb-2">
+          <span>CPF</span>
+        </div>
+
+        <Field
+          type="text"
+          name="cpf"
+          v-mask="['###.###.###-##']"
+          placeholder="000.000.000-00"
+          class="input input-bordered w-full"
+          :class="{'input-error': errors?.cpf}"
+        />
+
+        <div v-if="'cpf' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="cpf" />
+        </div>
+      </label>
+
+      <label class="w-full">
+        <div class="mb-2">
+          <span>Data de nascimento</span>
+        </div>
+
+        <Field
+          type="date"
+          name="birthDate"
+          class="input input-bordered w-full"
+          :class="{'input-error': errors?.birthDate}"
+        />
+
+        <div v-if="'birthDate' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="birthDate" />
+        </div>
+      </label>
+
+      <label class="w-full">
+        <div class="mb-2">
+          <span>Telefone</span>
+        </div>
+
+        <Field
+          type="text"
+          name="phone"
+          class="input input-bordered w-full"
+          :class="{'input-error': errors?.phone}"
+          v-mask="['(##) #####-####']"
+        />
+
+        <div v-if="'phone' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="phone" />
+        </div>
+      </label>
+
+      <label class="w-full">
+        <div class="mb-2">
+          <span>Nome</span>
+        </div>
+
+        <Field
+          type="text"
+          name="name"
+          class="input input-bordered w-full"
+          placeholder="..."
+          maxlength="20"
+          :class="{'input-error': errors?.name}"
+        />
+
+        <div v-if="'name' in errors" class="label">
+          <ErrorMessage class="label-text-alt text-sm text-red-500" name="name" />
+        </div>
+      </label>
+
+      <div>
+        <div class="mb-2">
+          <span>Senha</span>
+        </div>
+
+        <label class="input input-bordered flex items-center gap-2" :class="{'input-error': errors?.password}">
+          <Field
+            :type="showPasswordAsPlainText ? 'text' : 'password'"
+            class="grow"
+            name="password"
+            placeholder="******"
+          />
+
+          <button type="button" @click="showPasswordAsPlainText = !showPasswordAsPlainText">
+            <i v-if="!showPasswordAsPlainText" class="pi pi-eye"></i>
+            <i v-else class="pi pi-eye-slash"></i>
+          </button>
+        </label>
+      </div>
+
+      <div role="alert" class="alert alert-info max-w-screen-lg mx-auto mb-5 text-sm">
+        <span>Seu(s) tipo(s) de usuário não podem ser alterado. Seus tipos são: <span class="badge badge-neutral">{{ initialValues.roles.join(', ') }}</span></span>
+      </div>
 
       <div class="flex justify-end">
-        <button type="submit" class="btn btn-primary">Atualizar</button>
+        <button type="submit" class="btn btn-primary">
+          <span>{{ putRequestIsRunning ? 'Atualizando' : 'Atualizar' }}</span>
+          <span v-if="putRequestIsRunning" class="loading loading-spinner"></span>
+        </button>
       </div>
     </Form>
   </div>
@@ -42,14 +165,18 @@
   const {
     get,
     data,
+
     requestIsRunning,
+    putRequestIsRunning,
+
     initialValues,
     Form,
     Field,
     ErrorMessage,
     submitUpdate,
     invalidSubmitUpdate,
-    updateProfileFormSchema
+    updateProfileFormSchema,
+    showPasswordAsPlainText
   } = useProfile()
 
   onMounted(get)

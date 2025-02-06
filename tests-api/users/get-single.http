@@ -1,4 +1,4 @@
 GET https://demometaway.vps-kinghost.net:8485/api/usuario/buscar/7
 accept: */*
 content-type: application/json
-authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTczODc2MTc5NSwiZXhwIjoxNzM4ODQ4MTk1fQ.5xFe4zdtu-yMN77vnkWt1CxkwdOdfz4dbzWS_XVcJlST3Kn1hQdxyxcwbk2-o5T8O-YcNr_ayXm5UWPa26UVNQ
+authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvbGk3ZWlyYWZlbGlwZSIsImlhdCI6MTczODg1MTMyNSwiZXhwIjoxNzM4OTM3NzI1fQ.zmrPHyjVUtVzC9W_adoT3pL4x8XDDH1-QX_0y6WajzRa0ng3tWQGfmXleijwrUVkWtH6B_Y6wRQVJueZ_DfHNw

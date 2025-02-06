@@ -1,0 +1,14 @@
+PUT https://demometaway.vps-kinghost.net:8485/api/usuario/atualizar
+accept: */*
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvbGk3ZWlyYWZlbGlwZSIsImlhdCI6MTczODg1MTMyNSwiZXhwIjoxNzM4OTM3NzI1fQ.zmrPHyjVUtVzC9W_adoT3pL4x8XDDH1-QX_0y6WajzRa0ng3tWQGfmXleijwrUVkWtH6B_Y6wRQVJueZ_DfHNw
+
+{
+    "nome": "Nome atualizado",
+    "password": "1q2w3e4r5t",
+    "dataNascimento": "1990-02-02",
+    "email": "felipe.oliveira@metaway2.com",
+    "telefone": "11978727272",
+    "username": "oli7eirafelipe",
+    "id": 7
+}
