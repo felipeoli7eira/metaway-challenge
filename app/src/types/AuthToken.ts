@@ -1,6 +1,9 @@
 type AuthToken = {
-    token: string;
-    validade: string;
-}
+    id: number
+    username: string
+    tipos: string[]
+    accessToken: string
+    tokenType: string
+  }
 
 export default AuthToken

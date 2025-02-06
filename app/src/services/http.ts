@@ -14,7 +14,7 @@ axios.defaults.headers.common["Accept"] = "*/*";
 http.interceptors.request.use((config: InternalAxiosRequestConfig<any>): Promise<InternalAxiosRequestConfig<any>> => {
 
   if (hasToken()) {
-    const token = getAuthTokenStateValue().token;
+    const token = getAuthTokenStateValue().accessToken;
 
     config.headers.Authorization = 'Bearer '.concat(token)
   }

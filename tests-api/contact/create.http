@@ -1,0 +1,25 @@
+POST https://demometaway.vps-kinghost.net:8485/api/contato/salvar
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvbGk3ZWlyYWZlbGlwZSIsImlhdCI6MTczODc5ODc4MSwiZXhwIjoxNzM4ODg1MTgxfQ.nUYejOMwFghx-sg58fJBnLRum1ms9llyxSYPXeh8P5muk_ll65tZKEzIKhV_DvxV4fUZjFh5dVBPqlklN7aB3g
+
+{
+  "email": "contato1@gmail.com",
+  "pessoa": {
+    "cpf": "190.670.910-65",
+    "endereco": {
+      "bairro": "Nova Brasília de Itapuã",
+      "cep": "41611-054",
+      "cidade": "Salvador",
+      "estado": "BA",
+      "logradouro": "Caminho 1",
+      "numero": 123,
+      "pais": "Brasil"
+    },
+    "foto": {
+      "id": "string",
+      "name": "string",
+      "type": "string"
+    },
+  },
+  "privado": false
+}

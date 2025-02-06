@@ -22,7 +22,7 @@
 
           <p class="my-1 mb-5 font-thin">Preencha as informações do novo contato</p>
 
-          <div class="grid md:grid-cols-2 gap-3">
+          <!-- <div class="grid md:grid-cols-2 gap-3">
             <label class="form-control w-full">
               <div class="label">
                 <span class="label-text">Nome</span>
@@ -75,7 +75,8 @@
             </label>
           </div>
 
-          <div class="modal-action">
+           -->
+           <div class="modal-action">
             <button
               id="modalAddContactCloseAction"
               onclick="modalAddContact.close()"
@@ -98,6 +99,23 @@
 
 <script lang="ts" setup>
   import PageHeader from "./../../../components/HeaderPage/HeaderPage.vue";
+  import AppButton from "./../../../components/AppButton/index.vue";
 
   import usePost from "./../../../hooks/contact/usePost";
+
+  const {
+    submit,
+    requestIsRunning: requestPostIsRunning,
+
+    postSchema,
+    initialValuesFormCreate,
+
+    Form,
+    Field,
+    ErrorMessage,
+
+    invalidSubmit,
+    whenPostFinish,
+    formErrors,
+  } = usePost();
 </script>
