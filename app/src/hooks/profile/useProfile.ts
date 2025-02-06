@@ -4,7 +4,7 @@ import { Form, Field, ErrorMessage } from "vee-validate"
 import { updateProfileFormSchema } from "./../../schemas/profile/update"
 import useAuthToken from "../auth/useAuthToken"
 import http from "../../services/http"
-import { type GetUserDataHttpResponse, type UserObject } from "./types"
+import { type UserObject } from "./types"
 
 const ENDPOINT_GET = "/api/usuario/buscar/"
 const ENDPOINT_PUT = "/api/usuario/atualizar"
