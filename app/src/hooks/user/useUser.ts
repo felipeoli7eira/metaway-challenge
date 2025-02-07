@@ -9,10 +9,10 @@ import {
 
 import { toast } from "@steveyuowo/vue-hot-toast"
 import http from "../../services/http"
-import PostUserSchema from "../../schemas/user/post"
+import formSchema from "../../schemas/user/formSchema"
 import ckeckIfHasErrorInKey from "../../utils/layout/ckeckIfHasErrorInKey"
 import { ref } from "vue"
-import User from "../../types/User"
+import type User from "../../types/User"
 
 type FormFields = {
   name: string,
@@ -29,7 +29,6 @@ export default function useUser() {
   const showPasswordAsPlainText = ref<boolean>(false)
   const postRequestIsRunning = ref<boolean>(false)
   const getUsersRequestIsRunning = ref<boolean>(false)
-  const deletUserRequestIsRunning = ref<boolean>(false)
 
   const listOfUser = ref<User[]>([])
 
@@ -104,7 +103,8 @@ export default function useUser() {
     Form,
     Field,
     ErrorMessage,
-    PostUserSchema,
+    formSchema,
+
     ckeckIfHasErrorInKey,
     postUser,
     postRequestIsRunning,
@@ -114,6 +114,6 @@ export default function useUser() {
     closeDialogCreateUser,
 
     getUsersRequestIsRunning,
-    listOfUser
+    listOfUser,
   }
 }

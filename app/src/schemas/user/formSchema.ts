@@ -4,9 +4,9 @@ import {
     validateCPF,
     validateBirthDate,
     validateMobilePhone
-} from "./../../utils/validators"
+} from "../../utils/validators"
 
-const PostUserSchema = yup.object({
+const formSchema = yup.object({
     role: yup
         .string()
         .required("Campo obrigatório")
@@ -38,10 +38,10 @@ const PostUserSchema = yup.object({
         .required("Este campo não pode ficar vazio")
         .test("phone", "Telefone inválido", value => validateMobilePhone(value ?? "")),
     password: yup
-            .string()
-            .trim()
-            .required("Este campo não pode ficar vazio")
-            .test("passwordLen", "A senha deve ter entre 6 e 20 caracteres", v =>  v.trim().length >= 6 && v.trim().length <= 20),
+        .string()
+        .trim()
+        .required("Este campo não pode ficar vazio")
+        .test("passwordLen", "A senha deve ter entre 6 e 20 caracteres", v =>  v.trim().length >= 6 && v.trim().length <= 20),
 })
 
-export default PostUserSchema
+export default formSchema
