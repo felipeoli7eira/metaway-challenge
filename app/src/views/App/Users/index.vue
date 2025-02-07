@@ -6,6 +6,10 @@
             <button type="button" onclick="modalCreateUser.showModal()" class="btn btn-primary">Novo usuário</button>
         </div>
 
+        <div class="mt-5">
+            <ListUsers />
+        </div>
+
         <!-- modalCreateUser -->
         <dialog id="modalCreateUser" class="modal">
             <Form
@@ -172,6 +176,7 @@
 <script lang="ts" setup>
     import PageHeader from "./../../../components/HeaderPage/HeaderPage.vue"
     import useUser from "./../../../hooks/user/useUser"
+    import ListUsers from "./ListUsers.vue"
 
     const {
         Form,

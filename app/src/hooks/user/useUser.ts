@@ -1,5 +1,5 @@
 const POST_URL = "/api/usuario/salvar"
-const GET_URL = "/api/v1/Usuarios"
+const GET_URL = "/api/usuario/pesquisar"
 
 import {
   Form,
@@ -12,6 +12,7 @@ import http from "../../services/http"
 import PostUserSchema from "../../schemas/user/post"
 import ckeckIfHasErrorInKey from "../../utils/layout/ckeckIfHasErrorInKey"
 import { ref } from "vue"
+import User from "../../types/User"
 
 type FormFields = {
   name: string,
@@ -27,8 +28,25 @@ type FormFields = {
 export default function useUser() {
   const showPasswordAsPlainText = ref<boolean>(false)
   const postRequestIsRunning = ref<boolean>(false)
+  const getUsersRequestIsRunning = ref<boolean>(false)
 
-  async function getUsers() {
+  const listOfUser = ref<User[]>([])
+
+  async function getUsers(termo: string = ""): Promise<void> {
+    try {
+      getUsersRequestIsRunning.value = true
+      const request = await http.post(GET_URL, {termo})
+
+      if (request.status !== 200) {
+        throw new Error(request.statusText)
+      }
+
+      listOfUser.value = request.data
+    } catch (_) {
+      toast.error("Erro ao buscar os usuarios")
+    } finally {
+      getUsersRequestIsRunning.value = false
+    }
   }
 
   async function postUser(formData: FormFields, {resetForm}): Promise<void> {
@@ -92,6 +110,9 @@ export default function useUser() {
     getUsers,
     invalidPostSubmit,
     showPasswordAsPlainText,
-    closeDialogCreateUser
+    closeDialogCreateUser,
+
+    getUsersRequestIsRunning,
+    listOfUser
   }
 }
