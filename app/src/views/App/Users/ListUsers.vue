@@ -26,7 +26,7 @@
                                     <i class="pi pi-list"></i>
                                 </button>
 
-                                <button type="button" class="btn btn-sm" @click="() => {}">
+                                <button type="button" class="btn btn-sm" @click="() => openDialogConfirmDeleteUser(user)">
                                     <i class="pi pi-trash"></i>
                                 </button>
                             </td>
@@ -35,18 +35,44 @@
                 </table>
             </div>
         </div>
+
+        <!-- dialogConfirmDelteUser -->
+        <dialog id="dialogConfirmDeleteUser" class="modal">
+            <div class="modal-box">
+                <h3 class="text-lg font-bold">Atenção</h3>
+                <p class="py-4">Confirmar a deleção do usuário "<b>{{ selectedUser?.nome }}</b>"?</p>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button class="btn btn-ghost" @click="() => selectedUser = null">Cancelar</button>
+                        <button type="button" @click="() => {}" class="btn btn-error ms-2">
+                            Confirmar <i class="pi pi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
     </div>
 </template>
 
-<script setup>
-    import { onMounted } from "vue"
+<script setup lang="ts">
+    import { onMounted, ref } from "vue"
     import useUser from "./../../../hooks/user/useUser"
     import { format } from "date-fns"
+    import User from "../../../types/User"
 
     const {
         getUsers,
         listOfUser
     } = useUser()
+
+    const selectedUser = ref<User>(null)
+
+    function openDialogConfirmDeleteUser(user: User) {
+        const dialog = document.getElementById("dialogConfirmDeleteUser") as HTMLDialogElement
+        dialog.showModal()
+
+        selectedUser.value = user
+    }
 
     onMounted(getUsers)
 </script>

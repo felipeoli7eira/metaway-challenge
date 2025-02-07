@@ -29,6 +29,7 @@ export default function useUser() {
   const showPasswordAsPlainText = ref<boolean>(false)
   const postRequestIsRunning = ref<boolean>(false)
   const getUsersRequestIsRunning = ref<boolean>(false)
+  const deletUserRequestIsRunning = ref<boolean>(false)
 
   const listOfUser = ref<User[]>([])
 
