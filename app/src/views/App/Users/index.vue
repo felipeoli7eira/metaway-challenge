@@ -6,9 +6,16 @@
             <button type="button" onclick="modalCreateUser.showModal()" class="btn btn-primary">Novo usuário</button>
         </div>
 
-        <!-- modal create user -->
+        <!-- modalCreateUser -->
         <dialog id="modalCreateUser" class="modal">
-            <div class="modal-box w-11/12 max-w-5xl">
+            <Form
+                class="modal-box w-11/12 max-w-5xl"
+                v-slot="{errors}"
+                @submit="postUser"
+                @invalidSubmit="invalidPostSubmit"
+                :validationSchema="PostUserSchema"
+                id="formCreateUser"
+            >
                 <h3 class="text-lg font-bold">Cadastro de usuário</h3>
                 <p>Preencha as informações do novo usuário</p>
 
@@ -17,13 +24,13 @@
                         <div class="label">
                             <span class="label-text">Tipo de usuário</span>
                         </div>
-                        <select class="select select-bordered w-full">
-                            <option disabled selected>Clique e selecione</option>
+                        <Field :class="ckeckIfHasErrorInKey(errors, 'role', 'select')" name="role" as="select" class="select select-bordered w-full">
+                            <option disabled selected>Selecione</option>
                             <option value="ROLE_ADMIN">Admin</option>
                             <option value="ROLE_USER">Usuário comum</option>
-                        </select>
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+                        </Field>
+                        <div v-if="'role' in errors" class="label">
+                            <ErrorMessage name="role" class="label-text-alt text-red-400" />
                         </div>
                     </label>
 
@@ -31,9 +38,14 @@
                         <div class="label">
                             <span class="label-text">Nome</span>
                         </div>
-                        <input type="text" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+                        <Field
+                            name="name"
+                            type="text"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'name')"
+                        />
+                        <div v-if="'name' in errors" class="label">
+                            <ErrorMessage name="name" class="label-text-alt text-red-400" />
                         </div>
                     </label>
                 </div>
@@ -43,9 +55,14 @@
                         <div class="label">
                             <span class="label-text">E-mail</span>
                         </div>
-                        <input type="text" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+                        <Field
+                            name="email"
+                            type="email"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'email')"
+                        />
+                        <div v-if="'email' in errors" class="label">
+                            <ErrorMessage name="email" class="label-text-alt text-red-400" />
                         </div>
                     </label>
 
@@ -53,9 +70,14 @@
                         <div class="label">
                             <span class="label-text">Nome de usuário</span>
                         </div>
-                        <input type="text" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+                        <Field
+                            name="username"
+                            type="text"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'username')"
+                        />
+                        <div v-if="'username' in errors" class="label">
+                            <ErrorMessage name="username" class="label-text-alt text-red-400" />
                         </div>
                     </label>
 
@@ -63,9 +85,15 @@
                         <div class="label">
                             <span class="label-text">Data de nascimento</span>
                         </div>
-                        <input type="date" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+                        <Field
+                            type="date"
+                            name="birthDate"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'birthDate')"
+                        />
+
+                        <div v-if="'birthDate' in errors" class="label">
+                            <ErrorMessage name="birthDate" class="label-text-alt text-red-400" />
                         </div>
                     </label>
                 </div>
@@ -75,9 +103,17 @@
                         <div class="label">
                             <span class="label-text">CPF</span>
                         </div>
-                        <input type="text" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+
+                        <Field
+                            type="text"
+                            name="cpf"
+                            v-mask="['###.###.###-##']"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'cpf')"
+                        />
+
+                        <div v-if="'cpf' in errors" class="label">
+                            <ErrorMessage name="cpf" class="label-text-alt text-red-400" />
                         </div>
                     </label>
 
@@ -85,36 +121,68 @@
                         <div class="label">
                             <span class="label-text">Telefone</span>
                         </div>
-                        <input type="text" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+
+                        <Field
+                            type="text"
+                            name="phone"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'phone')"
+                            v-mask="['(##) #####-####']"
+                        />
+
+                        <div v-if="'phone' in errors" class="label">
+                            <ErrorMessage name="phone" class="label-text-alt text-red-400" />
                         </div>
                     </label>
 
                     <label class="form-control p-2 w-fullborder">
                         <div class="label">
-                            <span class="label-text">Senha de acesso</span>
+                            <span class="label-text">Senha</span>
+                            <span class="label-text cursor-pointer" @click="showPasswordAsPlainText = !showPasswordAsPlainText">
+                                <i v-if="!showPasswordAsPlainText" class="pi pi-eye"></i>
+                                <i v-else class="pi pi-eye-slash"></i>
+                            </span>
                         </div>
-                        <input type="date" placeholder="..." class="input input-bordered w-full" />
-                        <div class="label">
-                            <span class="label-text-alt text-red-400">Campo obrigatório</span>
+
+                        <Field
+                            :type="showPasswordAsPlainText ? 'text' : 'password'"
+                            name="password"
+                            class="input input-bordered w-full"
+                            :class="ckeckIfHasErrorInKey(errors, 'phone')"
+                            maxlength="20"
+                        />
+
+                        <div v-if="'password' in errors" class="label">
+                            <ErrorMessage name="password" class="label-text-alt text-red-400" />
                         </div>
                     </label>
                 </div>
 
                 <div class="modal-action">
-                    <form method="dialog" class="flex gap-3">
-                        <!-- if there is a button, it will close the modal -->
-                        <button type="button" class="btn">Fechar</button>
-                        <button type="submit" class="btn btn-primary">Cadastrar</button>
-                    </form>
+                    <button :disabled="postRequestIsRunning" @click="closeDialogCreateUser" id="modalCreateUserCloseAction" type="button" class="btn">Fechar</button>
+                    <button :disabled="postRequestIsRunning" type="submit" class="btn btn-primary">
+                        {{ postRequestIsRunning ? 'Cadastrando' : 'Cadastrar' }} <span v-if="postRequestIsRunning" class="loading loading-spinner loading-sm"></span>
+                    </button>
                 </div>
-            </div>
+            </Form>
         </dialog>
     </div>
 </template>
 
 <script lang="ts" setup>
     import PageHeader from "./../../../components/HeaderPage/HeaderPage.vue"
-    import { onMounted } from "vue"
+    import useUser from "./../../../hooks/user/useUser"
+
+    const {
+        Form,
+        Field,
+        ErrorMessage,
+        ckeckIfHasErrorInKey,
+        postUser,
+        postRequestIsRunning,
+        invalidPostSubmit,
+        PostUserSchema,
+        showPasswordAsPlainText,
+        closeDialogCreateUser
+    } = useUser()
 </script>
