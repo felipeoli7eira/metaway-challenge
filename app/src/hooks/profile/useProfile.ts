@@ -5,6 +5,8 @@ import { updateProfileFormSchema } from "./../../schemas/profile/update"
 import useAuthToken from "../auth/useAuthToken"
 import http from "../../services/http"
 import { type UserObject } from "./types"
+import UserRoleEnum from "../../enums/UserRoleEnum"
+import ckeckIfHasErrorInKey from "./../../utils/layout/ckeckIfHasErrorInKey"
 
 const ENDPOINT_GET = "/api/usuario/buscar/"
 const ENDPOINT_PUT = "/api/usuario/atualizar"
@@ -142,6 +144,8 @@ export default function useProfile() {
     submitUpdate,
     invalidSubmitUpdate,
     updateProfileFormSchema,
-    showPasswordAsPlainText
+    showPasswordAsPlainText,
+    UserRoleEnum,
+    ckeckIfHasErrorInKey
   }
 }

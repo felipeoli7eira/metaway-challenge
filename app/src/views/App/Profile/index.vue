@@ -24,7 +24,7 @@
           maxlength="20"
           class="input input-bordered w-full"
           placeholder="@nomeDeUsuario"
-          :class="{'input-error': errors?.username}"
+          :class="ckeckIfHasErrorInKey(errors, 'username')"
         />
 
         <div v-if="'username' in errors" class="label">
@@ -42,7 +42,7 @@
           name="email"
           class="input input-bordered w-full"
           placeholder="seu@email.com"
-          :class="{'input-error': errors?.email}"
+          :class="ckeckIfHasErrorInKey(errors, 'email')"
         />
 
         <div v-if="'email' in errors" class="label">
@@ -61,7 +61,7 @@
           v-mask="['###.###.###-##']"
           placeholder="000.000.000-00"
           class="input input-bordered w-full"
-          :class="{'input-error': errors?.cpf}"
+          :class="ckeckIfHasErrorInKey(errors, 'cpf')"
         />
 
         <div v-if="'cpf' in errors" class="label">
@@ -78,7 +78,7 @@
           type="date"
           name="birthDate"
           class="input input-bordered w-full"
-          :class="{'input-error': errors?.birthDate}"
+          :class="ckeckIfHasErrorInKey(errors, 'birthDate')"
         />
 
         <div v-if="'birthDate' in errors" class="label">
@@ -95,7 +95,7 @@
           type="text"
           name="phone"
           class="input input-bordered w-full"
-          :class="{'input-error': errors?.phone}"
+          :class="ckeckIfHasErrorInKey(errors, 'phone')"
           v-mask="['(##) #####-####']"
         />
 
@@ -115,7 +115,7 @@
           class="input input-bordered w-full"
           placeholder="..."
           maxlength="20"
-          :class="{'input-error': errors?.name}"
+          :class="ckeckIfHasErrorInKey(errors, 'name')"
         />
 
         <div v-if="'name' in errors" class="label">
@@ -128,7 +128,7 @@
           <span>Senha</span>
         </div>
 
-        <label class="input input-bordered flex items-center gap-2" :class="{'input-error': errors?.password}">
+        <label class="input input-bordered flex items-center gap-2" :class="ckeckIfHasErrorInKey(errors, 'password')">
           <Field
             :type="showPasswordAsPlainText ? 'text' : 'password'"
             class="grow"
@@ -143,11 +143,11 @@
         </label>
       </div>
 
-      <div role="alert" class="alert alert-info max-w-screen-lg mx-auto mb-5 text-sm">
-        <span>Seu(s) tipo(s) de usuário não podem ser alterado. Seus tipos são: <span class="badge badge-neutral">{{ initialValues.roles.join(', ') }}</span></span>
+      <div v-if="initialValues.roles.length" role="alert" class="alert alert-info rounded-md max-w-screen-lg mx-auto mb-5 text-sm">
+        <span>Seu(s) tipo(s) de usuário não podem ser alterado(s). Seu(s) tipo(s): <span class="badge rounded-md badge-neutral">{{ initialValues.roles.map(r => UserRoleEnum[r]).join(', ') }}</span></span>
       </div>
 
-      <div class="flex justify-end">
+      <div v-if="initialValues.roles.length" class="flex justify-end">
         <button type="submit" class="btn btn-primary">
           <span>{{ putRequestIsRunning ? 'Atualizando' : 'Atualizar' }}</span>
           <span v-if="putRequestIsRunning" class="loading loading-spinner"></span>
@@ -164,9 +164,6 @@
 
   const {
     get,
-    data,
-
-    requestIsRunning,
     putRequestIsRunning,
 
     initialValues,
@@ -176,7 +173,9 @@
     submitUpdate,
     invalidSubmitUpdate,
     updateProfileFormSchema,
-    showPasswordAsPlainText
+    showPasswordAsPlainText,
+    UserRoleEnum,
+    ckeckIfHasErrorInKey
   } = useProfile()
 
   onMounted(get)
