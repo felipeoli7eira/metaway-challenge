@@ -1,5 +1,6 @@
 const POST_URL = "/api/usuario/salvar"
 const GET_URL = "/api/usuario/pesquisar"
+const PUT_URL = "/api/usuario/atualizar"
 
 import {
   Form,
@@ -22,15 +23,17 @@ type FormFields = {
   phone: string,
   role: string,
   birthDate: string,
-  cpf: string
+  cpf: string,
+  id?: number
 }
 
 export default function useUser() {
   const showPasswordAsPlainText = ref<boolean>(false)
   const postRequestIsRunning = ref<boolean>(false)
   const getUsersRequestIsRunning = ref<boolean>(false)
+  const putUsersRequestIsRunning = ref<boolean>(false)
 
-  const listOfUser = ref<User[]>([])
+  const users = ref<User[]>([])
 
   async function getUsers(termo: string = ""): Promise<void> {
     try {
@@ -41,7 +44,7 @@ export default function useUser() {
         throw new Error(request.statusText)
       }
 
-      listOfUser.value = request.data
+      users.value = request.data
     } catch (_) {
       toast.error("Erro ao buscar os usuarios")
     } finally {
@@ -73,6 +76,7 @@ export default function useUser() {
       }
 
       toast.success("Usuario cadastrado com sucesso")
+      getUsers()
       resetForm()
       closeDialogCreateUser()
     }
@@ -85,12 +89,51 @@ export default function useUser() {
     }
   }
 
+  async function putUser(formData: any, {resetForm}): Promise<void> {
+    try {
+      putUsersRequestIsRunning.value = true
+
+      let payload = {
+        cpf: formData.cpf,
+        dataNascimento: formData.birthDate,
+        email: formData.email,
+        nome: formData.name,
+        telefone: formData.phone,
+        username: formData.username,
+        id: formData.id
+      }
+
+      if (formData.password.length) {
+        payload.password = formData.password
+      }
+
+      const request = await http.put(PUT_URL, payload)
+
+      if (request.status !== 200) {
+        toast.error("Erro ao atualizar o usuario")
+        return
+      }
+
+      toast.success("Usuario atualziado com sucesso")
+      getUsers()
+      resetForm()
+      closeDialogCreateUser()
+    }
+    catch (error) {
+      console.error(error)
+      toast.error("Erro ao atualizar o usuario")
+    }
+    finally {
+      putUsersRequestIsRunning.value = false
+    }
+  }
+
   function invalidPostSubmit() {
     toast.error("Verifique os campos e tente novamente")
   }
 
   function closeDialogCreateUser() {
-    const dialog: HTMLDialogElement = document.getElementById("modalCreateUser") as HTMLDialogElement
+    const dialog: HTMLDialogElement = document.getElementById("dialogCreateUser") as HTMLDialogElement
 
     if (!dialog) {
       return
@@ -114,6 +157,8 @@ export default function useUser() {
     closeDialogCreateUser,
 
     getUsersRequestIsRunning,
-    listOfUser,
+    users,
+    putUser,
+    putUsersRequestIsRunning
   }
 }

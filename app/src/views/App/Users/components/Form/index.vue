@@ -1,11 +1,13 @@
 <template>
     <div>
-        <Form :validationSchema="formSchema" @submit="validSubmit" @invalidSubmit="invalidSubmit" :initial-values="initialValues" v-slot="{errors}">
-            {{ props.user }}
-
-            <hr>
-
-            {{ initialValues }}
+        <Form
+            :validationSchema="schema"
+            @submit="validSubmit"
+            @invalidSubmit="invalidSubmit"
+            :initialValues="initialValues"
+            :key="initialValues"
+            v-slot="{errors}"
+        >
             <div class="grid md:grid-cols-2">
                 <label class="form-control p-1">
                     <div class="label p-1">
@@ -159,24 +161,14 @@
 </template>
 
 <script setup lang="ts">
-    import { defineProps, onMounted, defineEmits, computed, ref } from "vue"
+    import { defineProps, onMounted, defineEmits, ref, watch } from "vue"
     import useUser from "@/hooks/user/useUser"
     import type User from "@/types/User"
 
     // * props and configs
-    const props = defineProps<{user?: User}>()
+    const props = defineProps<{user?: User, action: string, schema: object}>()
     const emits = defineEmits(['whenSubmittingData'])
-    const initialValues = ref<{
-        name: string,
-        birthDate: string,
-        cpf: string,
-        email: string,
-        id?: number,
-        role: string,
-        phone: string,
-        password: string
-
-    }>()
+    const initialValues = ref()
 
     const {
         showPasswordAsPlainText,
@@ -188,22 +180,27 @@
         ErrorMessage
     } = useUser()
 
-    // * methods
-    function fillFormWithUserDataOrNot(): void {
-        if (props.user !== undefined && props.user !== null) {
-            initialValues.value = props.user
-            console.log('props.user', props.user)
-            return
+    function validSubmit(formData, validator): void {
+        emits('whenSubmittingData', {formData, validator})
+    }
+
+    function invalidSubmit(errors): void {}
+
+    watch(props, (newProps) => {
+        console.log(newProps.user)
+        if (props.action === "update") {
+            initialValues.value = {
+                name: newProps.user?.nome,
+                username: newProps.user?.username,
+                email: newProps.user?.email,
+                phone: newProps.user?.telefone,
+                password: "",
+                birthDate: newProps.user?.dataNascimento,
+                role: newProps.user?.role,
+                cpf: newProps.user?.cpf
+            }
         }
-    }
+    })
 
-    function validSubmit(formData): void {
-        emits('whenSubmittingData', formData)
-    }
-
-    function invalidSubmit(errors): void {
-    }
-
-    // * lifecycle hooks
-    onMounted(fillFormWithUserDataOrNot)
+    // onMounted(fillFormWithUserDataOrNot)
 </script>

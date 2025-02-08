@@ -1,7 +1,11 @@
 <template>
     <div>
         <div class="shadow-xl rounded-md hidden md:block">
-            <div v-if="listOfUser.length" class="overflow-x-auto">
+            <div v-if="getUsersRequestIsRunning" class="flex justify-center p-5">
+                <span  class="loading loading-dots loading-lg"></span>
+            </div>
+
+            <div v-else class="overflow-x-auto">
                 <table class="table table-xs table-zebra">
                     <thead>
                         <tr class="bg-base-200">
@@ -15,18 +19,18 @@
                     </thead>
 
                     <tbody class="text-sm">
-                        <tr v-for="user in listOfUser" :key="user.id.toString().concat('md')">
+                        <tr v-for="user in users" :key="user.id.toString().concat('md')">
                             <td class="p-2">{{ user.nome }}</td>
                             <td class="p-2">{{ user.username }}</td>
                             <td class="p-2">{{ user.email }}</td>
                             <td class="p-2">{{ user.cpf }}</td>
                             <td class="p-2">{{ format(user.dataNascimento, "dd/MM/yyyy") }}</td>
                             <td class="md:space-x-1 space-y-1 md:space-y-0">
-                                <button class="btn btn-sm" @click="() => editUser(user)">
+                                <button class="btn btn-sm" @click="editUser(user)">
                                     <i class="pi pi-user-edit"></i>
                                 </button>
 
-                                <button type="button" class="btn btn-sm btn-error" @click="() => openDialogConfirmDeleteUser(user)">
+                                <button type="button" class="btn btn-sm btn-error" @click="openDialogConfirmDeleteUser(user)">
                                     <i class="pi pi-trash"></i>
                                 </button>
                             </td>
@@ -40,9 +44,10 @@
             <div class="modal-box">
                 <h3 class="text-lg font-bold">Atenção</h3>
                 <p class="py-4">Confirmar a deleção do usuário "<b>{{ selectedUser?.nome }}</b>"?</p>
+
                 <div class="modal-action">
                     <form method="dialog">
-                        <button class="btn btn-ghost" @click="cancelDeleteUser">Cancelar</button>
+                        <button class="btn btn-ghost" @click="clearSelectedUser">Cancelar</button>
                         <button type="button" @click="voidFunction" class="btn btn-error ms-2">
                             Confirmar <i class="pi pi-trash"></i>
                         </button>
@@ -54,13 +59,16 @@
         <dialog id="dialogUpdateUser" class="modal">
             <div class="modal-box w-11/12 max-w-5xl">
                 <h3 class="text-lg font-bold">Atualização de usuário</h3>
-                <p>Preencha as seguintes informações</p>
+                <p class="mb-5">Preencha as seguintes informações</p>
 
-                <FormUser :user="selectedUserToUpdate" @whenSubmittingData="() => {}">
+                <FormUser action="update" :user="selectedToUpdate" :schema="updateSchema" @whenSubmittingData="updateUserDatahandler">
                     <template v-slot:footer>
                         <div class="mt-5 flex justify-end gap-3 px-2">
-                            <button type="button" class="btn btn-ghost" @click="closeModalUpdateUser">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Atulizar usuário</button>
+                            <button :disabled="putUsersRequestIsRunning" type="button" class="btn btn-ghost" @click="closeDialogUpdateUser">Cancelar</button>
+                            <button :disabled="putUsersRequestIsRunning" type="submit" class="btn btn-primary">
+                                <span>{{ putUsersRequestIsRunning ? 'Atualizando' : 'Atualizar' }}</span>
+                                <span v-if="putUsersRequestIsRunning" class="loading loading-spinner text-primary"></span>
+                            </button>
                         </div>
                     </template>
                 </FormUser>
@@ -70,38 +78,26 @@
 </template>
 
 <script setup lang="ts">
-    import { onMounted, ref, nextTick } from "vue"
+    import { onMounted, ref } from "vue"
     import { format } from "date-fns"
     import useUser from "@/hooks/user/useUser"
     import type User from "@/types/User"
     import FormUser from "./../Form/index.vue"
+    import { updateSchema } from "@/schemas/user/formSchema"
+    import http from "@/services/http"
+    import { toast } from "@steveyuowo/vue-hot-toast"
 
     const {
         getUsers,
-        listOfUser
+        users,
+        getUsersRequestIsRunning,
+        putUser,
+        putUsersRequestIsRunning
     } = useUser()
 
     const selectedUser = ref<User>(null)
-    const selectedUserToUpdate = ref<{
-        name: string,
-        birthDate: string,
-        cpf: string,
-        email: string,
-        id?: number,
-        role: string,
-        phone: string,
-        password: string
-
-    }>({
-        name: "xxxx",
-        birthDate: "",
-        cpf: "",
-        email: "",
-        id: 0,
-        role: "",
-        phone: "",
-        password: ""
-    })
+    const selectedToUpdate = ref<User|undefined>()
+    const getUserByIdRequestIsRunning = ref<boolean>(false)
 
     function openDialogConfirmDeleteUser(user: User) {
         const dialog = document.getElementById("dialogConfirmDeleteUser") as HTMLDialogElement
@@ -110,39 +106,47 @@
         selectedUser.value = user
     }
 
-    function openDialogUpdateUser(): void {
-        const dialog = document.getElementById("dialogUpdateUser") as HTMLDialogElement
-        dialog.showModal()
-    }
+    async function editUser(user: User): Promise<void> {
+        try {
+            getUserByIdRequestIsRunning.value = true
+            const request = await http.get("/api/usuario/buscar/".concat(user.id.toString()))
 
-    function selectUser(user: User) : void {
-        selectedUser.value = user
-    }
+            if (request.status !== 200) {
+                throw new Error("Erro ao buscar usuário")
+            }
 
-    function editUser(user: User): void {
-        selectedUserToUpdate.value = {
-            name: user.nome,
-            birthDate: user.dataNascimento,
-            cpf: user.cpf,
-            email: user.email,
-            id: user.id,
-            role: user.role,
-            phone: user.telefone,
-            password: "",
+            const response = request.data.object
+
+            user.role = response.tipos[0]
+            selectedToUpdate.value = user
+            openDialogUpdateUser()
+        } catch (error) {
+            toast.error("Erro ao buscar usuário")
+        } finally {
+            getUserByIdRequestIsRunning.value = false
         }
-
-        openDialogUpdateUser()
     }
 
-    function cancelDeleteUser(): void {
+    function clearSelectedUser(): void {
         selectedUser.value = null
     }
 
     function voidFunction(): void {}
 
-    function closeModalUpdateUser(): void {
-        const modal = document.getElementById("dialogUpdateUser") as HTMLDialogElement
-        modal.close()
+    function closeDialogUpdateUser(): void {
+        const dialog = document.getElementById("dialogUpdateUser") as HTMLDialogElement
+        dialog.close()
+    }
+
+    function openDialogUpdateUser(): void {
+        const dialog = document.getElementById("dialogUpdateUser") as HTMLDialogElement
+        dialog.showModal()
+    }
+
+    function updateUserDatahandler({formData, validator}): void {
+        formData.id = selectedToUpdate.value?.id
+        putUser(formData, validator)
+        closeDialogUpdateUser()
     }
 
     onMounted(getUsers)

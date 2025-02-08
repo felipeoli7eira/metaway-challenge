@@ -1,20 +1,12 @@
 <template>
-    <div id="users">
+    <div>
         <div class="flex justify-between">
             <PageHeader title="Usuários" description="Nesta página é possível ver todos os usuários cadastrados por você" />
             <button type="button" onclick="dialogCreateUser.showModal()" class="btn btn-primary">Novo usuário</button>
         </div>
 
         <div class="mt-5">
-            <!-- <FormUser :user="{}" @whenSubmittingData="updateUserHandler">
-                <template v-slot:footer>
-                    <div class="mt-5 flex justify-end gap-3 px-2">
-                        <button type="button" class="btn btn-ghost" @click="closeModalCreateNewUser">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Confirmar alterações</button>
-                    </div>
-                </template>
-            </FormUser> -->
-            <Table />
+            <Table></Table>
         </div>
 
         <!-- dialogCreateUser -->
@@ -23,11 +15,14 @@
                 <h3 class="text-lg font-bold">Cadastro de usuário</h3>
                 <p>Preencha as seguintes informações</p>
 
-                <FormUser @whenSubmittingData="createNewUserHandler">
+                <FormUser action="create" :schema="createSchema" @whenSubmittingData="createNewUserHandler">
                     <template v-slot:footer>
                         <div class="mt-5 flex justify-end gap-3 px-2">
-                            <button type="button" class="btn btn-ghost" @click="closeModalCreateNewUser">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Cadastrar usuário</button>
+                            <button :disabled="postRequestIsRunning" type="button" class="btn btn-ghost" @click="closeModalCreateNewUser">Cancelar</button>
+                            <button :disabled="postRequestIsRunning" type="submit" class="btn btn-primary">
+                                <span>{{ postRequestIsRunning ? 'Cadastrando' : 'Cadastrar' }}</span>
+                                <span v-if="postRequestIsRunning" class="loading loading-spinner text-primary"></span>
+                            </button>
                         </div>
                     </template>
                 </FormUser>
@@ -41,41 +36,19 @@
     import useUser from "./../../../hooks/user/useUser"
     import Table from "./components/Table/index.vue"
     import FormUser from "./components/Form/index.vue"
-    import { ref } from "vue"
-    import type User from "@/types/User"
+    import { createSchema } from "@/schemas/user/formSchema"
 
-    const selectedUser = ref<User|undefined>()
+    const {
+        postUser,
+        postRequestIsRunning
+    } = useUser()
 
     function closeModalCreateNewUser(): void {
         const modal = document.getElementById("dialogCreateUser") as HTMLDialogElement
         modal.close()
     }
 
-    function createNewUserHandler(formData): void {
-        console.clear()
-        console.log('createNewUserHandler')
-        console.log(formData)
+    function createNewUserHandler({formData, validator}): void {
+        postUser(formData, validator)
     }
-
-    function updateUserHandler(formData): void {
-        console.clear()
-        console.log('updateUserHandler')
-        console.log(formData)
-    }
-
-    function getUserData(): void {
-    }
-
-    const {
-        Form,
-        Field,
-        ErrorMessage,
-        ckeckIfHasErrorInKey,
-        postUser,
-        postRequestIsRunning,
-        invalidPostSubmit,
-        PostUserSchema,
-        showPasswordAsPlainText,
-        closeDialogCreateUser
-    } = useUser()
 </script>
