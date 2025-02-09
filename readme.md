@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./app/public/vue.svg" />
+    <img src="./app/public/vue.svg" width="100" />
 </p>
 
 Antes de mais nada, você precisa instalar no seu sistema operacional a ferramenta [taskfile.dev](https://taskfile.dev/) pois essa estrutura de projeto foi pensada para usar essa ferramenta como CLI para fazer o setup e com ela será mais simples executar comandos e fazer configurações do projeto. Veja a [página de instalação](https://taskfile.dev/installation/) para o seu sistema.
